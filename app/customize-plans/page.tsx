@@ -157,13 +157,15 @@ const formSchema = z.object({
         required_error: "Please select at least one consultation focus",
       })
     )
-    .min(1, { message: "At least one consultation focus must be selected" }),
+    .min(1, { message: "At least one consultation focus must be selected" })
+    .optional(),
 
   companyStage: z
     .string({
       required_error: "Please select the company stage",
     })
-    .min(1, { message: "Company stage is required" }),
+    .min(1, { message: "Company stage is required" })
+    .optional(),
 
   partnershipFocus: z
     .array(
@@ -171,19 +173,22 @@ const formSchema = z.object({
         required_error: "Please select at least one partnership focus",
       })
     )
-    .min(1, { message: "At least one partnership focus must be selected" }),
+    .min(1, { message: "At least one partnership focus must be selected" })
+    .optional(),
 
   timeFrameForResult: z
     .string({
       required_error: "Please select a timeframe for the result",
     })
-    .min(1, { message: "Time frame is required" }),
+    .min(1, { message: "Time frame is required" })
+    .optional(),
 
   consultationLength: z
     .string({
       required_error: "Please select the consultation length",
     })
-    .min(1, { message: "Consultation length is required" }),
+    .min(1, { message: "Consultation length is required" })
+    .optional(),
 
   followUpSupport: z
     .array(
@@ -193,7 +198,8 @@ const formSchema = z.object({
     )
     .min(1, {
       message: "At least one follow-up support option must be selected",
-    }),
+    })
+    .optional(),
 
   additionalInformation: z
     .string()
@@ -410,7 +416,7 @@ const CustomizePlan = () => {
                 <FormItem className="border p-3 rounded-lg">
                   <FormLabel className="text-base">
                     Desired Outcome / Consultation Focus
-                    <sup className="text-rose-500">*</sup>
+                    {/* <sup className="text-rose-500">*</sup> */}
                   </FormLabel>
                   {services.map((item) => (
                     <FormField
@@ -461,7 +467,7 @@ const CustomizePlan = () => {
               render={({ field }) => (
                 <FormItem className="border p-3 rounded-lg">
                   <FormLabel className="text-base">
-                    Company Stage<sup className="text-rose-500">*</sup>
+                    {/* Company Stage<sup className="text-rose-500">*</sup> */}
                   </FormLabel>
                   <FormControl>
                     <RadioGroup
@@ -495,7 +501,8 @@ const CustomizePlan = () => {
               render={() => (
                 <FormItem className="border p-3 rounded-lg">
                   <FormLabel className="text-base">
-                    Partnership Focus<sup className="text-rose-500">*</sup>
+                    Partnership Focus
+                    {/* <sup className="text-rose-500">*</sup> */}
                   </FormLabel>
                   {partnershipFocus.map((item) => (
                     <FormField
@@ -546,7 +553,8 @@ const CustomizePlan = () => {
               render={({ field }) => (
                 <FormItem className="border p-3 rounded-lg">
                   <FormLabel className="text-base">
-                    Timeframe for Result<sup className="text-rose-500">*</sup>
+                    Timeframe for Result
+                    {/* <sup className="text-rose-500">*</sup> */}
                   </FormLabel>
                   <FormControl>
                     <RadioGroup
@@ -580,7 +588,8 @@ const CustomizePlan = () => {
               render={({ field }) => (
                 <FormItem className="border p-3 rounded-lg">
                   <FormLabel className="text-base">
-                    Consultation Length<sup className="text-rose-500">*</sup>
+                    Consultation Length
+                    {/* <sup className="text-rose-500">*</sup> */}
                   </FormLabel>
                   <FormControl>
                     <RadioGroup
@@ -614,7 +623,8 @@ const CustomizePlan = () => {
               render={() => (
                 <FormItem className="border p-3 rounded-lg">
                   <FormLabel className="text-base">
-                    Follow-Up Support<sup className="text-rose-500">*</sup>
+                    Follow-Up Support
+                    {/* <sup className="text-rose-500">*</sup> */}
                   </FormLabel>
                   {followUpSupport.map((item) => (
                     <FormField

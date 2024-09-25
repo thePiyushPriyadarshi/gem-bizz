@@ -211,9 +211,12 @@ const CustomizePlan = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
   });
+
+  const [loading,setLoading] = useState(false);
   const [amount, setAmount] = useState(0); 
   const onSubmit = async (data: FormDataObject) => {
     const toastId = toast.loading("Form Submitting...");
+    setLoading(true);
     try {
       const formData = new FormData();
 
@@ -228,6 +231,9 @@ const CustomizePlan = () => {
     } catch {
       toast.dismiss(toastId);
       toast.error("Error while submitting form, Please try again later.");
+    }
+    finally{
+      setLoading(false)
     }
   };
 
@@ -278,7 +284,7 @@ const CustomizePlan = () => {
 
     setAmount(totalAmout);
     if (totalAmout > 0) {
-      toast.message(`$ ${totalAmout}`, {
+      toast.info(`$ ${totalAmout}`, {
         description: "Total Amount",
       });
     }
@@ -672,7 +678,7 @@ const CustomizePlan = () => {
               )}
             />
             <div className="justify-center flex">
-              <Button type="submit" className="w-1/3">
+              <Button disabled={loading} type="submit" className="w-1/3">
                 Submit
               </Button>
             </div>

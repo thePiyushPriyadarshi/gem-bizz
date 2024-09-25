@@ -32,7 +32,7 @@ export default function RootLayout({
       >
         <Navbar/>
         {children}
-        <Toaster richColors/>
+        <Toaster richColors position="top-right" closeButton/>
       </body>
     </html>
   );

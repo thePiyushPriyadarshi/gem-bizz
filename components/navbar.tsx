@@ -21,7 +21,7 @@ const links = [
 const Navbar = () => {
   return (
     <nav className="bg-gray-800 shadow-2xl">
-      <div className="max-w-[1180px] w-11/12 mx-auto py-2 text-primary-foreground flex items-center justify-between">/
+      <div className="max-w-[1180px] w-11/12 mx-auto py-2 text-primary-foreground flex items-center justify-between">
         <div>
           <Link href={"/"}>
             <Image alt="logo" src="/logo.jpg" width={48} height={48} />

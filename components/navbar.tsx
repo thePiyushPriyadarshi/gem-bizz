@@ -21,11 +21,13 @@ const links = [
 const Navbar = () => {
   return (
     <nav className="bg-gray-800 shadow-2xl">
-      <div className="max-w-[1180px] mx-auto py-2 text-primary-foreground flex items-center justify-between">
+      <div className="max-w-[1180px] w-11/12 mx-auto py-2 text-primary-foreground flex items-center justify-between">/
         <div>
-          <Image alt="logo" src="/logo.jpg" width={48} height={48} />
+          <Link href={"/"}>
+            <Image alt="logo" src="/logo.jpg" width={48} height={48} />
+          </Link>
         </div>
-        <div className="space-x-10">
+        <div className="space-x-10 md:block hidden">
           {links.map((link) => (
             <Link href={link.value} key={link.label}>
               {link.label}
@@ -33,7 +35,9 @@ const Navbar = () => {
           ))}
         </div>
         <Link href={"/customize-plans"}>
-          <Button className="bg-teal-400" variant={"secondary"}>Consultation Customization</Button>
+          <Button className="bg-teal-400" variant={"secondary"}>
+            Consultation Customization
+          </Button>
         </Link>
       </div>
     </nav>

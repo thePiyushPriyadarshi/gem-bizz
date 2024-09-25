@@ -3,7 +3,6 @@ import { cloudinaryConnect } from "@/utils/cloudinary";
 import mailSender from "@/utils/mailSender";
 import { mailTemplate } from "@/utils/mailtemplate";
 
-
 cloudinaryConnect();
 export async function POST(request) {
   try {
@@ -21,14 +20,14 @@ export async function POST(request) {
     const additionalInformation = reqBody.get("additionalInformation");
     const marketCap = reqBody.get("marketCap");
 
-    const screenshotBuffer = await logo.arrayBuffer();
-    const mime = logo.type;
-    const encoding = "base64";
-    const base64Data = Buffer.from(screenshotBuffer).toString("base64"); 
-    const fileUrl = "data:" + mime + ";" + encoding + "," + base64Data;
- 
     let logoImg;
-    if (fileUrl) {
+    if (logo && logo instanceof File && logo.size > 0) { 
+      const screenshotBuffer = await logo?.arrayBuffer();
+      const mime = logo.type;
+      const encoding = "base64";
+      const base64Data = Buffer.from(screenshotBuffer).toString("base64");
+      const fileUrl = "data:" + mime + ";" + encoding + "," + base64Data;
+
       logoImg = await uploadImageToCloudinary(fileUrl, "GemBizz");
     }
 
@@ -47,7 +46,11 @@ export async function POST(request) {
       partnershipFocus,
     };
 
-   await mailSender(email, "Response of your Consultation Request", mailTemplate(data));
+    await mailSender(
+      email,
+      "Response of your Consultation Request",
+      mailTemplate(data)
+    );
 
     return Response.json({
       message: "Success",

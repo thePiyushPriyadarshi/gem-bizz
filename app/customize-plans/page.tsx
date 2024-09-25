@@ -25,7 +25,9 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { z } from "zod"; 
 
 const services = [
   {
@@ -121,25 +123,112 @@ const followUpSupport = [
   },
 ];
 
+const formSchema = z.object({
+  companyName: z
+    .string({
+      required_error: "Please enter the company name",
+    })
+    .min(1, { message: "Company name must be at least 1 character long" })
+    .max(100, { message: "Company name must be 100 characters or less" }),
+
+  email: z
+    .string({
+      required_error: "Please enter the email address",
+    })
+    .email({ message: "Invalid email address" }),
+
+  logo: z.instanceof(File).optional(), // Optional file field
+
+  industry: z
+    .string({
+      required_error: "Please select the industry",
+    })
+    .min(1, { message: "Industry is required" }),
+
+  marketCap: z
+    .string({
+      required_error: "Please enter the market cap",
+    })
+    .min(1, { message: "Market Cap is required" }),
+
+  consultationFocus: z
+    .array(
+      z.string({
+        required_error: "Please select at least one consultation focus",
+      })
+    )
+    .min(1, { message: "At least one consultation focus must be selected" }),
+
+  companyStage: z
+    .string({
+      required_error: "Please select the company stage",
+    })
+    .min(1, { message: "Company stage is required" }),
+
+  partnershipFocus: z
+    .array(
+      z.string({
+        required_error: "Please select at least one partnership focus",
+      })
+    )
+    .min(1, { message: "At least one partnership focus must be selected" }),
+
+  timeFrameForResult: z
+    .string({
+      required_error: "Please select a timeframe for the result",
+    })
+    .min(1, { message: "Time frame is required" }),
+
+  consultationLength: z
+    .string({
+      required_error: "Please select the consultation length",
+    })
+    .min(1, { message: "Consultation length is required" }),
+
+  followUpSupport: z
+    .array(
+      z.string({
+        required_error: "Please select at least one follow-up support option",
+      })
+    )
+    .min(1, {
+      message: "At least one follow-up support option must be selected",
+    }),
+
+  additionalInformation: z
+    .string()
+    .max(500, {
+      message: "Additional information cannot exceed 500 characters",
+    })
+    .optional(),
+});
+
 interface FormDataObject {
   [key: string]: string | Blob; // or any other type you expect
 }
 
 const CustomizePlan = () => {
-  const form = useForm();
-  const [amount, setAmount] = useState(0);
-  const router = useRouter();
-
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+  });
+  const [amount, setAmount] = useState(0); 
   const onSubmit = async (data: FormDataObject) => {
-    const formData = new FormData();
+    const toastId = toast.loading("Form Submitting...");
+    try {
+      const formData = new FormData();
 
-    for (const key in data) {
-      formData.append(key, data[key]);
+      for (const key in data) {
+        formData.append(key, data[key]);
+      }
+      await axios.post("/api/sendMail", formData);
+      toast.dismiss(toastId);
+      toast.success("Form submitted successfully"); 
+
+       window.location.reload();
+    } catch {
+      toast.dismiss(toastId);
+      toast.error("Error while submitting form, Please try again later.");
     }
-    await axios.post("/api/sendMail", formData);
-    toast.success("Form submitted successfully");
-    router.refresh();
-
   };
 
   useEffect(() => {
@@ -179,32 +268,20 @@ const CustomizePlan = () => {
           return sum + amount;
         }, 0) || 0;
 
-    setAmount(
+    const totalAmout =
       consultationFocusPrice +
-        companyStagePrice +
-        partnershipFocusPrice +
-        timeFramePrice +
-        consultationLengthPrice +
-        followUpSupportPrice
-    ); 
-    toast.message(`$ ${
-        consultationFocusPrice +
-        companyStagePrice +
-        partnershipFocusPrice +
-        timeFramePrice +
-        consultationLengthPrice +
-        followUpSupportPrice
-      }`, {
-      description: "Total Amount",
-    });
-    // console.log({
-    //   consultationFocusPrice,
-    //   companyStagePrice,
-    //   partnershipFocusPrice,
-    //   timeFramePrice,
-    //   consultationLengthPrice,
-    //   followUpSupportPrice,
-    // });
+      companyStagePrice +
+      partnershipFocusPrice +
+      timeFramePrice +
+      consultationLengthPrice +
+      followUpSupportPrice;
+
+    setAmount(totalAmout);
+    if (totalAmout > 0) {
+      toast.message(`$ ${totalAmout}`, {
+        description: "Total Amount",
+      });
+    }
   }, [
     form,
     form.watch("consultationFocus"),
@@ -237,7 +314,9 @@ const CustomizePlan = () => {
               name="companyName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Company Name</FormLabel>
+                  <FormLabel>
+                    Company Name<sup className="text-rose-500">*</sup>
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -251,7 +330,9 @@ const CustomizePlan = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Business Email</FormLabel>
+                  <FormLabel>
+                    Business Email<sup className="text-rose-500">*</sup>
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -290,7 +371,9 @@ const CustomizePlan = () => {
               name="industry"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Industry</FormLabel>
+                  <FormLabel>
+                    Industry<sup className="text-rose-500">*</sup>
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -304,7 +387,7 @@ const CustomizePlan = () => {
               name="marketCap"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Company Market Cap</FormLabel>
+                  <FormLabel>Company Market Cap<sup className="text-rose-500">*</sup></FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>
@@ -321,6 +404,7 @@ const CustomizePlan = () => {
                 <FormItem className="border p-3 rounded-lg">
                   <FormLabel className="text-base">
                     Desired Outcome / Consultation Focus
+                    <sup className="text-rose-500">*</sup>
                   </FormLabel>
                   {services.map((item) => (
                     <FormField
@@ -370,7 +454,9 @@ const CustomizePlan = () => {
               name="companyStage"
               render={({ field }) => (
                 <FormItem className="border p-3 rounded-lg">
-                  <FormLabel className="text-base">Company Stage</FormLabel>
+                  <FormLabel className="text-base">
+                    Company Stage<sup className="text-rose-500">*</sup>
+                  </FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
@@ -402,7 +488,9 @@ const CustomizePlan = () => {
               name="partnershipFocus"
               render={() => (
                 <FormItem className="border p-3 rounded-lg">
-                  <FormLabel className="text-base">Partnership Focus</FormLabel>
+                  <FormLabel className="text-base">
+                    Partnership Focus<sup className="text-rose-500">*</sup>
+                  </FormLabel>
                   {partnershipFocus.map((item) => (
                     <FormField
                       key={item.value}
@@ -452,7 +540,7 @@ const CustomizePlan = () => {
               render={({ field }) => (
                 <FormItem className="border p-3 rounded-lg">
                   <FormLabel className="text-base">
-                    Timeframe for Result
+                    Timeframe for Result<sup className="text-rose-500">*</sup>
                   </FormLabel>
                   <FormControl>
                     <RadioGroup
@@ -486,7 +574,7 @@ const CustomizePlan = () => {
               render={({ field }) => (
                 <FormItem className="border p-3 rounded-lg">
                   <FormLabel className="text-base">
-                    Consultation Length
+                    Consultation Length<sup className="text-rose-500">*</sup>
                   </FormLabel>
                   <FormControl>
                     <RadioGroup
@@ -519,7 +607,9 @@ const CustomizePlan = () => {
               name="followUpSupport"
               render={() => (
                 <FormItem className="border p-3 rounded-lg">
-                  <FormLabel className="text-base">Follow-Up Support</FormLabel>
+                  <FormLabel className="text-base">
+                    Follow-Up Support<sup className="text-rose-500">*</sup>
+                  </FormLabel>
                   {followUpSupport.map((item) => (
                     <FormField
                       key={item.value}
@@ -568,9 +658,7 @@ const CustomizePlan = () => {
               name="additionalInformation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Brief Message or Additional Information{" "}
-                  </FormLabel>
+                  <FormLabel>Brief Message or Additional Information</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Please specify any additional details or specific goals you have in mind"

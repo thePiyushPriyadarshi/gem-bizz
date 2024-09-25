@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const services = [
   {
@@ -127,6 +128,7 @@ interface FormDataObject {
 const CustomizePlan = () => {
   const form = useForm();
   const [amount, setAmount] = useState(0);
+  const router = useRouter();
 
   const onSubmit = async (data: FormDataObject) => {
     const formData = new FormData();
@@ -135,6 +137,9 @@ const CustomizePlan = () => {
       formData.append(key, data[key]);
     }
     await axios.post("/api/sendMail", formData);
+    toast.success("Form submitted successfully");
+    router.refresh();
+
   };
 
   useEffect(() => {
@@ -258,6 +263,7 @@ const CustomizePlan = () => {
             <FormField
               control={form.control}
               name="logo"
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               render={({ field: { onChange, value, ...rest } }) => (
                 <FormItem>
                   <FormLabel>Company Logo</FormLabel>

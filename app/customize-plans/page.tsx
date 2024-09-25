@@ -223,9 +223,9 @@ const CustomizePlan = () => {
       for (const key in data) {
         formData.append(key, data[key]);
       }
-      await axios.post("/api/sendMail", formData);
+      // await axios.post("/api/sendMail", formData);
       toast.dismiss(toastId);
-      toast.success("Form submitted successfully"); 
+      toast.info("Mail will be sent in future"); 
 
        window.location.reload();
     } catch {
